@@ -1,63 +1,60 @@
-<?php
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<form action="POST" id="myform">
+    <input type="file" name="artwork" id="artwork">
+    <button class="button btn-primary" id="submit">SUBMIT</button>
+</form>
+
+<script
+    src="https://code.jquery.com/jquery-2.2.4.min.js"
+    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+    crossorigin="anonymous"></script>
 
 
-require './vendor/autoload.php';
+<script>
 
-//// Create the s3 client
-//$s3 = new Aws\S3\S3Client([
-//    'version' => 'latest',
-//    'region'  => 'us-east-1'
-//]);
-use Aws\Exception\AwsException;
-use Aws\S3\Exception\S3Exception;
+    $('#submit').click(function(e){
+        e.preventDefault();
 
+        var file = $('#artwork')[0].files[0];
 
-try {
+        var formData = new FormData(this);
 
-    $file_Path = "An image path location";
+        formData.append('artwork', file);
 
+        $.ajax({
+            type : 'post',
+            url : './uploadFile.php',
+            data : formData,
+            contentType: false,
+            processData: false,
+            cache: false,
+            success : function(results){
+                console.log(results)
 
-    // Use the us-west-2 region and latest version of each client.
-    $sharedConfig = [
-        'region'  => 'us-west-2',
-        'version' => 'latest',
-        'credentials' => [
-            'key' => "AKIAJY2NY2BUBMFTE3MQ",
-            'secret' => "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"
-        ]
-    ];
+            },
+            complete : function(){
 
-    // Create an SDK class used to share configuration across clients.
-    $sdk = new Aws\Sdk($sharedConfig);
-
-    // Create an Amazon S3 client using the shared configuration data.
-    $s3Client = $sdk->createS3();
-
-    // Send a PutObject request and get the result object.
-    $result = $s3Client->putObject([
-        'Bucket' => 'stylusmagento-contactform-fileuploads',
-        'Key'    => 'my-newfi-file',
-        'SourceFile' => $file_Path
-//        'Body'   => 'this is the body!'
-    ]);
-
-    // Download the contents of the object.
-    $result = $s3Client->getObject([
-        'Bucket' => 'stylusmagento-contactform-fileuploads',
-        'Key'    => 'my-newfi-file'
-    ]);
-
-    // Print the body of the result by indexing into the result object.
-    echo $result['Body'];
+            }
+        })
 
 
-} catch (S3Exception $e) {
-    // Catch an S3 specific exception.
-    echo $e->getMessage();
-} catch (AwsException $e) {
-    // This catches the more generic AwsException. You can grab information
-    // from the exception using methods of the exception object.
-    echo $e->getAwsRequestId() . "\n";
-    echo $e->getAwsErrorType() . "\n";
-    echo $e->getAwsErrorCode() . "\n";
-}
+
+
+
+
+    })
+</script>
+
+</body>
+</html>
