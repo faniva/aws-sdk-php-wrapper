@@ -42,6 +42,7 @@ if(isset($_POST) ) {
 
         // Send a PutObject request and get the result object.
         $result = $s3Client->putObject([
+            'ACL' => 'public-read',
             'Bucket' => 'stylusmagento-contactform-fileuploads',
             'Key'    => $keyname,
             'SourceFile' => $artwork['tmp_name']
@@ -57,6 +58,8 @@ if(isset($_POST) ) {
 //
 //        // Print the body of the result by indexing into the result object.
 //        echo $result['Body'];
+
+        echo $url = $result['ObjectURL'];
 
 
     } catch (S3Exception $e) {
